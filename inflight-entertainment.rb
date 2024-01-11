@@ -15,25 +15,48 @@
 # Don't make your users watch the same movie twice
 # Optimize for runtime over memory
 
+# My solution
+# def can_two_movies_fill_flight?(movie_lengths, flight_length)
+#   # Determine if two movie runtimes add up to the flight length.
+#   if movie_lengths.length == 2
+#     return movie_lengths[0] + movie_lengths[1] == flight_length
+
+#   elsif movie_lengths.length < 2
+#     return false
+
+#   else
+
+#     movie_lengths.each_with_index do |movie, index|
+#       movie_lengths.each_with_index do |movie2, index2|
+#         next if index == index2
+#         return true if movie + movie2 == flight_length
+#       end
+#     end
+#   end
+
+#   false
+# end
+
+# Optimized solution
+# We make one pass through movie_lengths, treating each item as the first_movie_length. At each iteration, we:
+
+# 1. See if there's a matching_second_movie_length we've seen already
+# (stored in our movie_lengths_seen set) that is equal to
+# flight_length - first_movie_length. If there is, we short-circuit and return true.
+# 2. Keep our movie_lengths_seen set up to date by throwing in the current first_movie_length.
+require 'set'
 def can_two_movies_fill_flight?(movie_lengths, flight_length)
-  # Determine if two movie runtimes add up to the flight length.
-
-  if movie_lengths.length == 2
-    return movie_lengths[0] + movie_lengths[1] == flight_length
-
-  elsif movie_lengths.length < 2
-    return false
-
-  else
-
-    movie_lengths.each_with_index do |movie, index|
-      movie_lengths.each_with_index do |movie2, index2|
-        next if index == index2
-        return true if movie + movie2 == flight_length
-      end
+  # Movie lenghts we've seen so far
+  movie_lengths_seen = Set.new
+  movie_lengths.any? do |first_movie_length|
+    matching_second_movie_lenght = flight_length - first_movie_length
+    if movie_lengths_seen.include?(matching_second_movie_lenght)
+      true
+    else
+      movie_lengths_seen.add(first_movie_length)
+      false
     end
   end
-  false
 end
 
 # Tests
